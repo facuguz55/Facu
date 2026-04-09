@@ -1,6 +1,500 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
-<meta http-equiv="refresh" content="0; url=https://facuguzman.lovable.app/">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Calculadora de Precio de Venta · Monotributista</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg-base: #0b0f19;
+      --bg-surface: rgba(30, 41, 59, 0.6);
+      --bg-surface-hover: rgba(30, 41, 59, 0.8);
+      --bg-input: rgba(255, 255, 255, 0.05);
+      --border: rgba(255, 255, 255, 0.08);
+      --border-highlight: rgba(255, 255, 255, 0.15);
+      --text-primary: #f8fafc;
+      --text-secondary: #94a3b8;
+      --text-muted: #64748b;
+      --cyan: #06b6d4;
+      --indigo: #6366f1;
+      --green: #10b981;
+      --amber: #f59e0b;
+      --red: #ef4444;
+      --glow-cyan: 0 0 15px rgba(6, 182, 212, 0.3);
+      --radius-card: 16px;
+      --radius-input: 10px;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--bg-base);
+      background-image:
+        radial-gradient(ellipse 80% 50% at 50% -10%, rgba(6, 182, 212, 0.10), transparent),
+        radial-gradient(ellipse 60% 40% at 85% 80%, rgba(99, 102, 241, 0.07), transparent);
+      color: var(--text-primary);
+      min-height: 100vh;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 40px 16px 60px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 680px;
+    }
+
+    /* HEADER */
+    .header {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+
+    .logo-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      border-radius: 10px;
+      padding: 5px 12px 5px 7px;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.03em;
+      color: var(--text-muted);
+      margin-bottom: 20px;
+      opacity: 0.7;
+    }
+
+    .logo-badge img {
+      width: 56px;
+      height: 56px;
+      object-fit: contain;
+      opacity: 0.85;
+    }
+
+    .web-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 12px;
+      padding: 6px 14px;
+      border: 1px solid rgba(6,182,212,0.3);
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--cyan);
+      text-decoration: none;
+      transition: background 0.2s, border-color 0.2s;
+    }
+
+    .web-btn:hover {
+      background: rgba(6,182,212,0.08);
+      border-color: rgba(6,182,212,0.6);
+    }
+
+    h1 {
+      font-size: clamp(22px, 5vw, 30px);
+      font-weight: 800;
+      color: var(--text-primary);
+      line-height: 1.2;
+      margin-bottom: 8px;
+    }
+
+    .subtitle {
+      font-size: 14px;
+      color: var(--text-secondary);
+    }
+
+    .subtitle span { color: var(--cyan); font-weight: 600; }
+
+    /* CARD */
+    .card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-card);
+      padding: 28px;
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      margin-bottom: 16px;
+    }
+
+    .card-title {
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .card-title::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    /* GRID */
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    @media (max-width: 500px) {
+      .grid { grid-template-columns: 1fr; }
+    }
+
+    .field { display: flex; flex-direction: column; gap: 6px; }
+    .field.full { grid-column: 1 / -1; }
+
+    label {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    label .icon {
+      font-size: 13px;
+      opacity: 0.7;
+    }
+
+    input[type="number"] {
+      width: 100%;
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-input);
+      padding: 10px 14px;
+      font-size: 14px;
+      font-family: 'Inter', sans-serif;
+      font-weight: 500;
+      color: var(--text-primary);
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+    }
+
+    input[type="number"]:focus {
+      border-color: var(--cyan);
+      background: rgba(6, 182, 212, 0.05);
+      box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.12);
+    }
+
+    input[type="number"]::placeholder { color: var(--text-muted); }
+    input[type="number"]::-webkit-inner-spin-button,
+    input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; }
+
+    .hint {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    /* ALERTA */
+    .alerta {
+      display: none;
+      background: rgba(245, 158, 11, 0.08);
+      border: 1px solid rgba(245, 158, 11, 0.25);
+      border-radius: 10px;
+      padding: 12px 16px;
+      font-size: 13px;
+      color: var(--amber);
+      margin-top: 16px;
+      line-height: 1.5;
+    }
+
+    .alerta.visible { display: flex; align-items: flex-start; gap: 10px; }
+    .alerta-icon { font-size: 16px; margin-top: 1px; flex-shrink: 0; }
+
+    /* BOTÓN */
+    .btn {
+      width: 100%;
+      margin-top: 20px;
+      padding: 14px;
+      background: linear-gradient(135deg, #06b6d4, #6366f1);
+      border: none;
+      border-radius: 10px;
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      color: #fff;
+      cursor: pointer;
+      transition: opacity 0.2s, box-shadow 0.2s, transform 0.1s;
+      box-shadow: var(--glow-cyan);
+    }
+
+    .btn:hover { opacity: 0.9; box-shadow: 0 0 24px rgba(6, 182, 212, 0.45); }
+    .btn:active { transform: scale(0.99); }
+
+    /* RESULTADO */
+    .resultado {
+      display: none;
+    }
+
+    .resultado.visible { display: block; }
+
+    .resultado .card-title { color: var(--cyan); }
+
+    .pv-main {
+      text-align: center;
+      padding: 20px 0 24px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 20px;
+    }
+
+    .pv-label {
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+
+    .pv-valor {
+      font-size: clamp(36px, 10vw, 52px);
+      font-weight: 800;
+      color: var(--cyan);
+      text-shadow: var(--glow-cyan);
+      line-height: 1;
+    }
+
+    .pv-nota {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 8px;
+    }
+
+    .desglose {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .desglose-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 13px;
+      padding: 8px 12px;
+      border-radius: 8px;
+      background: rgba(255,255,255,0.03);
+    }
+
+    .desglose-row .nombre { color: var(--text-secondary); display: flex; align-items: center; gap: 8px; }
+    .desglose-row .dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+    .desglose-row .monto { font-weight: 600; color: var(--text-primary); }
+
+    .formula {
+      margin-top: 20px;
+      padding: 12px 16px;
+      background: rgba(99, 102, 241, 0.06);
+      border: 1px solid rgba(99, 102, 241, 0.15);
+      border-radius: 10px;
+      font-size: 12px;
+      color: var(--text-muted);
+      font-family: 'Courier New', monospace;
+      line-height: 1.6;
+    }
+
+    .formula strong { color: var(--indigo); }
+  </style>
 </head>
+<body>
+
+<div class="container">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="logo-badge">
+      Enzo Ribot
+    </div>
+    <h1>Calculadora de Precio de Venta</h1>
+    <p class="subtitle">Para <span>monotributistas</span> · Simple, sin vueltas</p>
+    <a href="https://www.novaagency.info" target="_blank" rel="noopener" class="web-btn">
+      🌐 novaagency.info
+    </a>
+  </div>
+
+  <!-- FORMULARIO -->
+  <div class="card">
+    <div class="card-title">Parámetros</div>
+
+    <div class="grid">
+
+      <div class="field">
+        <label><span class="icon">📦</span> Costo de mercadería</label>
+        <input type="number" id="costo" placeholder="0" min="0" step="0.01" />
+        <span class="hint">En ARS</span>
+      </div>
+
+      <div class="field">
+        <label><span class="icon">💳</span> % Interés cuotas</label>
+        <input type="number" id="cuotas" placeholder="0" min="0" max="200" step="0.1" />
+        <span class="hint">Costo financiero sobre el precio</span>
+      </div>
+
+      <div class="field">
+        <label><span class="icon">🏛️</span> % Ingresos Brutos (IIBB)</label>
+        <input type="number" id="iibb" placeholder="3.5" min="0" max="100" step="0.1" />
+        <span class="hint">Varía según provincia (típico 3–5%)</span>
+      </div>
+
+      <div class="field">
+        <label><span class="icon">📣</span> Publicidad (USD por unidad)</label>
+        <input type="number" id="pubUSD" placeholder="0" min="0" step="0.01" />
+        <span class="hint">Costo de ads por unidad vendida</span>
+      </div>
+
+      <div class="field">
+        <label><span class="icon">💵</span> Cotización USD → ARS</label>
+        <input type="number" id="cotiz" placeholder="1200" min="1" step="1" />
+        <span class="hint">Tipo de cambio usado</span>
+      </div>
+
+      <div class="field">
+        <label><span class="icon">🚚</span> Logística (ARS)</label>
+        <input type="number" id="logistica" placeholder="0" min="0" step="0.01" />
+        <span class="hint">Envío + empaque por unidad</span>
+      </div>
+
+      <div class="field full">
+        <label><span class="icon">📈</span> Ganancia deseada (%)</label>
+        <input type="number" id="ganancia" placeholder="30" min="1" max="99" step="1" />
+        <span class="hint">% de margen neto sobre el precio de venta</span>
+      </div>
+
+    </div>
+
+    <!-- ALERTA CUOTAS -->
+    <div class="alerta" id="alertaCuotas">
+      <span class="alerta-icon">⚠️</span>
+      <span>El interés de cuotas supera el <strong>30%</strong> — revisá si ese costo financiero es real o si vas a absorberlo vos.</span>
+    </div>
+
+    <button class="btn" onclick="calcular()">CALCULAR PRECIO DE VENTA</button>
+  </div>
+
+  <!-- RESULTADO -->
+  <div class="card resultado" id="resultado">
+    <div class="card-title">Resultado</div>
+
+    <div class="pv-main">
+      <div class="pv-label">Precio de venta sugerido</div>
+      <div class="pv-valor" id="pvValor">$ 0</div>
+      <div class="pv-nota">Sin IVA incluido · Para monotributistas</div>
+    </div>
+
+    <div class="desglose">
+      <div class="desglose-row">
+        <span class="nombre"><span class="dot" style="background:#94a3b8"></span> Costo base</span>
+        <span class="monto" id="r-costo">$ 0</span>
+      </div>
+      <div class="desglose-row">
+        <span class="nombre"><span class="dot" style="background:#6366f1"></span> Interés cuotas</span>
+        <span class="monto" id="r-cuotas">$ 0</span>
+      </div>
+      <div class="desglose-row">
+        <span class="nombre"><span class="dot" style="background:#f59e0b"></span> Publicidad (en ARS)</span>
+        <span class="monto" id="r-pub">$ 0</span>
+      </div>
+      <div class="desglose-row">
+        <span class="nombre"><span class="dot" style="background:#ef4444"></span> Logística</span>
+        <span class="monto" id="r-log">$ 0</span>
+      </div>
+      <div class="desglose-row">
+        <span class="nombre"><span class="dot" style="background:#06b6d4"></span> Ganancia incluida</span>
+        <span class="monto" id="r-gan">$ 0</span>
+      </div>
+      <div class="desglose-row">
+        <span class="nombre"><span class="dot" style="background:#10b981"></span> IIBB sobre PV</span>
+        <span class="monto" id="r-iibb">$ 0</span>
+      </div>
+    </div>
+
+    <div class="formula">
+      <strong>Fórmula:</strong> PV = (costo + cuotas + publicidad + logística) ÷ (1 − ganancia% − IIBB%)<br>
+      <strong>Base:</strong> <span id="f-base">0</span> &nbsp;|&nbsp; <strong>Divisor:</strong> <span id="f-divisor">0</span>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  function fmt(n) {
+    return '$ ' + n.toLocaleString('es-AR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  }
+
+  function val(id, fallback = 0) {
+    const v = parseFloat(document.getElementById(id).value);
+    return isNaN(v) ? fallback : v;
+  }
+
+  function calcular() {
+    const costo     = val('costo');
+    const pctCuotas = val('cuotas');
+    const pctIIBB   = val('iibb', 3.5);
+    const pubUSD    = val('pubUSD');
+    const cotiz     = val('cotiz', 1);
+    const logistica = val('logistica');
+    const ganancia  = val('ganancia', 30);
+
+    // Validación mínima
+    if (costo <= 0) {
+      alert('Ingresá al menos el costo de mercadería.');
+      return;
+    }
+
+    if (ganancia + pctIIBB >= 100) {
+      alert('La suma de ganancia + IIBB no puede superar el 100%.');
+      return;
+    }
+
+    const interesCuotas = costo * (pctCuotas / 100);
+    const pubARS        = pubUSD * cotiz;
+    const base          = costo + interesCuotas + pubARS + logistica;
+    const divisor       = 1 - (ganancia / 100) - (pctIIBB / 100);
+    const pv            = base / divisor;
+
+    const gananciaARS   = pv * (ganancia / 100);
+    const iibbARS       = pv * (pctIIBB / 100);
+
+    // Alerta cuotas > 30%
+    const alerta = document.getElementById('alertaCuotas');
+    if (pctCuotas > 30) {
+      alerta.classList.add('visible');
+    } else {
+      alerta.classList.remove('visible');
+    }
+
+    // Mostrar resultado
+    document.getElementById('pvValor').textContent   = fmt(pv);
+    document.getElementById('r-costo').textContent   = fmt(costo);
+    document.getElementById('r-cuotas').textContent  = fmt(interesCuotas);
+    document.getElementById('r-pub').textContent     = fmt(pubARS);
+    document.getElementById('r-log').textContent     = fmt(logistica);
+    document.getElementById('r-gan').textContent     = fmt(gananciaARS);
+    document.getElementById('r-iibb').textContent    = fmt(iibbARS);
+    document.getElementById('f-base').textContent    = fmt(base);
+    document.getElementById('f-divisor').textContent = divisor.toFixed(4);
+
+    const card = document.getElementById('resultado');
+    card.classList.add('visible');
+    card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  // Calcular también con Enter
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Enter') calcular();
+  });
+</script>
+
+</body>
 </html>
